@@ -1,33 +1,41 @@
-import type { TestType } from "../../App"
+import { useNavigate } from "react-router"
+import TestStorage from "../../utils/TestStorage"
 import "./HomePage.css"
+import { useEffect } from "react"
 
 function HomePage() {
-    const QuizoraTests: TestType[] = JSON.parse(
-        localStorage.getItem("QuizoraTests") ?? "[]"
-    )
+    const navigate = useNavigate()
+
+    const QuizoraTests = TestStorage()
+
+    useEffect(() => {
+        if (localStorage.getItem("UserStats") === null) {
+            localStorage.setItem("UserStats", JSON.stringify([]))
+        }
+    }, [])
 
     return (
         <>
-            <header className="home-header">
+            <header className="header">
                 <div className="content">
                     <p className="quizora-logo">Quizora</p>
                     <div className="header-buttons">
-                        <button className="edit-tests-button">Редагувати тести</button>
+                        <button className="text-button">Редагувати тести</button>
                         <button className="create-test-button">Створити</button>
                     </div>
                 </div>
             </header>
 
-            <main className="home-main">
+            <main className="main">
                 <div className="content">
-                    <h1>Усі тести</h1>
+                    <h1 className="home-title">Усі тести</h1>
                     <div className="tests-list">
                         {QuizoraTests.length === 0 && (
                             <p>Тестів поки немає. Створи свій перший тест.</p>
                         )}
 
                         {QuizoraTests.map((item) => {
-                            return <div className="test-preview" key={item.id}>
+                            return <div className="test-preview" onClick={() => navigate(`/${item.id}`)} key={item.id}>
                                 <p>{item.name}</p>
                             </div>
                         })}
@@ -35,7 +43,7 @@ function HomePage() {
                 </div>
             </main>
 
-            <footer className="home-footer">
+            <footer className="footer">
                 <div className="content">
                     <p>Quizora — створюй тести та перевіряй знання</p>
                     <p>© 2026 Quizora</p>

@@ -16,7 +16,7 @@ body {
     font-family: "Inter", 'Arial';
 }
 
-button {
+button, input {
     display: block;
     font: inherit;
 }
@@ -28,9 +28,124 @@ button {
     padding-right: 3rem;
 }
 
+.header {
+    background-color: #fefeff;
+    border-bottom: 1px solid #ece9f3;
+}
+
+.header .content {
+    display: flex;
+    justify-content: space-between;
+    padding-top: 1.5rem;
+    padding-bottom: 1.5rem;
+    align-items: center;
+}
+
+.header .header-buttons {
+    display: flex;
+    align-items: center;
+    gap: 1.75rem;
+}
+
+.text-button {
+    background-color: transparent;
+    border: none;
+    font-size: 11pt;
+    font-weight: 500;
+    color: #514b62;
+    transition: color 0.2s ease;
+}
+
+.text-button:hover {
+    color: #7045d5;
+    cursor: pointer;
+}
+
+.main {
+    flex: 1;
+    background-color: #faf9fd;
+    padding: 6rem 0;
+}
+
+.home-title {
+    font-size: 40pt;
+    font-weight: 700;
+    margin-bottom: 3rem;
+}
+
+.footer {
+    border-top: 1px solid #ece9f3;
+    background-color: #fdfdfe;
+    font-size: 11pt;
+    color: #817b91;
+}
+
+.footer .content {
+    padding-top: 2.5rem;
+    padding-bottom: 2.5rem;
+    display: flex;
+    justify-content: space-between;
+}
+
 .quizora-logo {
     font-family: "Poppins", 'Arial';
     font-weight: 700;
     color: #7045d5;
     font-size: 20pt;
+}
+
+@media screen and (max-width: 640px) {
+    .content {
+        padding-left: 1.5rem;
+        padding-right: 1.5rem;
+    }
+    
+    .header .quizora-logo {
+        font-size: 18pt;
+    }
+    
+    .header .content {
+        align-items: flex-start;
+        justify-content: center;
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .row-mode .content {
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .header .header-buttons {
+        gap: 0;
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    .main {
+        padding-top: 4rem;
+        padding-bottom: 4rem;
+    }
+
+    .home-title {
+        font-size: 30pt;
+        margin-bottom: 2.5rem;
+    }
+
+    .text-button {
+        font-size: 10pt;
+    }
+
+    .footer {
+        font-size: 9.5pt;
+    }
+
+    .footer .content {
+        justify-content: center;
+        flex-direction: column;
+        gap: 1rem;
+        padding-top: 2.2rem;
+        padding-bottom: 2rem;
+    }
 }

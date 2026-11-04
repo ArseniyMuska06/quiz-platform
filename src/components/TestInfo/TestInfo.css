@@ -1,0 +1,127 @@
+.test-info {
+    background-color: white;
+    border: 1px solid #ece9f3;
+    border-radius: 30px;
+    max-width: 775px;
+    margin: 0 auto;
+    box-shadow: 0 8px 20px rgba(176, 175, 175, 0.164);
+}
+
+.test-info-header,
+.test-info-footer {
+    padding: 3rem;
+}
+
+.test-info-header h1 {
+    margin: 1rem 0;
+    font-size: 36pt;
+}
+
+.test-question-count {
+    background-color: #f0eafd;
+    color: #7e4bdb;
+    display: inline-block;
+    padding: 0.5rem 0.75rem;
+    border-radius: 20px;
+    font-size: 10pt;
+    text-transform: uppercase;
+    font-weight: 700;
+    letter-spacing: 1px;
+}
+
+.test-info-desc {
+    color: #696276;
+    font-size: 14pt;
+}
+
+.test-stats {
+    display: flex;
+    justify-content: space-between;
+    border-top: 1px solid #ece9f3;
+    border-bottom: 1px solid #ece9f3;
+}
+
+.last-result,
+.best-result {
+    width: 100%;
+    padding: 1.5rem 3rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+}
+
+.last-result {
+    border-right: 1px solid #ece9f3;
+}
+
+.last-result .text,
+.best-result .text {
+    color: #696276;
+}
+
+.last-result .number,
+.best-result .number {
+    font-size: 28pt;
+    font-weight: 700;
+    letter-spacing: 1px;
+}
+
+.best-result .number {
+    color: #7045d5;
+}
+
+.test-info-footer {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.start-test-button {
+    border: 1px solid #7045d5;
+    background-color: #7045d5;
+    color: white;
+    padding: 0.8rem 1.7rem;
+    font-size: 12pt;
+    font-weight: 600;
+    border-radius: 10px;
+    transition: color 0.15s ease, border 0.15s ease, transform 0.15s ease;
+    box-shadow: 0 10px 10px rgba(176, 175, 175, 0.325);
+}
+
+.start-test-button:hover {
+    border-color: #6037c5;
+    background-color: #6037c5;
+    transform: translateY(-1.5px);
+}
+
+@media screen and (max-width: 640px) {
+    .test-info-header h1 {
+        font-size: 28pt;
+    }
+    
+    .test-info-header,
+    .test-info-footer {
+        padding: 2.2rem 1.5rem;
+    }
+
+    .test-info-desc {
+        font-size: 12pt;
+    }
+
+    .test-question-count {
+        font-size: 9.5pt;
+    }
+
+    .start-test-button {
+        width: 100%;
+    }
+
+    .last-result,
+    .best-result {
+        padding: 1.5rem 1.5rem;
+    }
+
+    .last-result .number,
+    .best-result .number {
+        font-size: 24pt;
+    }
+}

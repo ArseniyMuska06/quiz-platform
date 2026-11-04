@@ -1,0 +1,251 @@
+.test-results-summary {
+    max-width: 860px;
+    margin: 0 auto;
+    border: 1px solid #e8e2f1;
+    border-radius: 24px;
+    background-color: white;
+    padding: 2.3rem;
+    margin-bottom: 2.5rem;
+    box-shadow: 0 10px 20px rgba(176, 175, 175, 0.162);
+}
+
+.test-results-label {
+    color: #7045d5;
+    text-transform: uppercase;
+    font-size: 11pt;
+    letter-spacing: 1.5px;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+}
+
+.test-results-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+}
+
+.test-results-count {
+    color: #696276;
+    font-size: 12pt;
+}
+
+.test-results-count .value {
+    font-weight: 600;
+    color: black;
+}
+
+.test-results-info h1 {
+    font-size: 36pt;
+    font-weight: 800;
+    margin-bottom: 1.3rem;
+}
+
+.test-results-percent {
+    color: #7045d5;
+    font-size: 48pt;
+    font-weight: 800;
+}
+
+.test-results-review {
+    max-width: 860px;
+    margin: 0 auto;
+}
+
+.test-results-review-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.test-results-review-title {
+    font-size: 22pt;
+    font-weight: 700;
+}
+
+.test-results-question-count {
+    font-size: 10.5pt;
+    color: #817b91;
+}
+
+.answer-review-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.answer-review-card {
+    display: flex;
+    padding: 1.75rem;
+    background-color: #fefeff;
+    border: 1px solid #e9e5ef;
+    border-radius: 20px;
+    box-shadow: 0 10px 10px rgba(176, 175, 175, 0.167);
+}
+
+.answer-review-content {
+    width: 100%;
+}
+
+.answer-review-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.answer-review-heading {
+    display: flex;
+    align-items: center;
+}
+
+.answer-review-question {
+    font-weight: 600;
+    line-height: 1.5;
+}
+
+.answer-review-number {
+    display: flex;
+    width: 32px;
+    height: 32px;
+    background-color: #f0eafd;
+    color: #7045d5;
+    border-radius: 8px;
+    font-weight: 600;
+    align-items: center;
+    justify-content: center;
+    margin-right: 1rem;
+}
+
+.answer-review-status {
+    font-weight: 700;
+    font-size: 9.5pt;
+    padding: 0.3rem 0.75rem;
+    border-radius: 20px;
+}
+
+.answer-review-status.skipped {
+    background-color: #f0eef3;
+    color: #756e80;
+}
+
+.answer-review-status.right {
+    background-color: #e7f6ee;
+    color: #277551;
+}
+
+.answer-review-status.wrong {
+    background-color: #fbecea;
+    color: #a4463b;
+}
+
+.answer-review-comparison {
+    margin-top: 1rem;
+    display: flex;
+    gap: 0.75rem;
+}
+
+.answer-review-comparison .user-answer,
+.answer-review-comparison .right-answer {
+    width: 100%;
+}
+
+.answer-review-comparison .user-answer {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    padding: 0.9rem;
+    border-radius: 10px;
+    background-color: #f7f5f9;
+    font-weight: 600;
+    color: #4a4355;
+    font-size: 10pt;
+}
+
+.answer-review-comparison .user-answer .label {
+    color: #8a8393;
+    text-transform: uppercase;
+    font-weight: 700;
+    font-size: 9pt;
+    letter-spacing: 1px;
+}
+
+.answer-review-comparison .right-answer {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    padding: 0.9rem;
+    border-radius: 10px;
+    background-color: #f2eefb;
+    font-weight: 600;
+    font-size: 10pt;
+    color: #4d3979;
+}
+
+.answer-review-comparison .right-answer .label {
+    color: #795caf;
+    text-transform: uppercase;
+    font-weight: 700;
+    font-size: 9pt;
+    letter-spacing: 1px;
+}
+
+.go-to-home-button {
+    margin: 0 auto;
+    margin-top: 1.75rem;
+    padding: 0.85rem 2rem;
+    border: 1px solid #7045d5;
+    background-color: #7045d5;
+    color: white;
+    font-weight: 700;
+    border-radius: 12px;
+    cursor: pointer;
+    box-shadow: 0 10px 10px rgba(176, 175, 175, 0.325);
+    transition: background-color 0.160s ease, border 0.160s ease;
+}
+
+.go-to-home-button:hover {
+    border: 1px solid #6037c5;
+    background-color: #6037c5;
+}
+
+@media screen and (max-width: 640px) {
+    .test-results-summary {
+        padding: 2rem;
+    }
+
+    .test-results-info {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1.5rem;
+    }
+
+    .test-results-info h1 {
+        font-size: 26pt;
+        margin-bottom: 1rem;
+    }
+
+    .test-results-review-title {
+        font-size: 18pt;
+    }
+
+    .answer-review-card {
+        padding: 1.3rem;
+    }
+
+    .answer-review-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+
+    .answer-review-comparison {
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+
+    .go-to-home-button {
+        width: 100%;
+        margin-left: 0;
+        margin-right: 0;
+    }
+}
