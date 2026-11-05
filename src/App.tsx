@@ -3,6 +3,7 @@ import './App.css'
 import { Routes, Route } from 'react-router'
 import TestPage from './pages/TestPage/TestPage'
 import LoginPage from "./pages/LoginPage/LoginPage"
+import RegisterPage from "./pages/RegisterPage/RegisterPage"
 import MyTestsPage from "./pages/MyTestsPage/MyTestsPage"
 
 function App() {
@@ -11,6 +12,7 @@ function App() {
       <Route path="/" element={<HomePage />} />
       <Route path="/:testId" element={<TestPage />} />
       <Route path="/login" element={<LoginPage />} />
+      <Route path="/register" element={<RegisterPage />} />
       <Route path="/my-tests" element={<MyTestsPage />} />
     </Routes>
   )

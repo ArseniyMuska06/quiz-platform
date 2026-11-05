@@ -91,6 +91,10 @@ function LoginPage() {
                         {loading ? "Входимо…" : "Увійти"}
                     </button>
                 </form>
+                <p>
+                    Ще не маєш акаунта?{" "}
+                    <Link to="/register" state={location.state}>Зареєструватися</Link>
+                </p>
             </div>
         </main>
     )
