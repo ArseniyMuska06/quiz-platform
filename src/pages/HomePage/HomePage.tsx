@@ -51,15 +51,94 @@ function HomePage() {
         return () => controller.abort()
     }, [retry])
 
+    const [authStatus, setAuthStatus] = useState<
+        "loading" | "guest" | "signedIn" | "error"
+    >("loading")
+
+    const [loggingOut, setLoggingOut] = useState(false)
+    const [logoutError, setLogoutError] = useState("")
+
+    useEffect(() => {
+        const controller = new AbortController()
+
+        async function checkSession() {
+            try {
+                const response = await fetch("/api/auth/me", {
+                    signal: controller.signal,
+                })
+
+                if (controller.signal.aborted) return
+
+                if (response.ok) {
+                    setAuthStatus("signedIn")
+                } else if (response.status === 401) {
+                    setAuthStatus("guest")
+                } else {
+                    setAuthStatus("error")
+                }
+            } catch {
+                if (!controller.signal.aborted) setAuthStatus("error")
+            }
+        }
+
+        void checkSession()
+        return () => controller.abort()
+    }, [])
+
+    async function logout() {
+        if (loggingOut) return
+
+        setLoggingOut(true)
+        setLogoutError("")
+
+        try {
+            const response = await fetch("/api/auth/logout", { method: "POST" })
+
+            if (!response.ok) {
+                setLogoutError("Не вдалося вийти. Спробуй ще раз.")
+                return
+            }
+
+            setAuthStatus("guest")
+        } catch {
+            setLogoutError("Не вдалося з’єднатися із сервером.")
+        } finally {
+            setLoggingOut(false)
+        }
+    }
+
     return (
         <>
             <header className="header">
                 <div className="content">
                     <p className="quizora-logo">Quizora</p>
                     <div className="header-buttons">
-                        <button onClick={() => navigate('/my-tests')} className="text-button">Мої тести</button>
-                        <button className="create-test-button">Створити</button>
-                        <Link className="text-button" to="/login">Увійти</Link>
+                        {authStatus === "guest" && (
+                            <>
+                                <Link className="text-button" to="/login">Вхід</Link>
+                                <Link className="text-button" to="/register">Реєстрація</Link>
+                            </>
+                        )}
+
+                        {authStatus === "signedIn" && (
+                            <>
+                                <Link className="text-button" to="/my-tests">Мої тести</Link>
+                                <button
+                                    type="button"
+                                    className="text-button"
+                                    onClick={logout}
+                                    disabled={loggingOut}
+                                >
+                                    {loggingOut ? "Виходимо…" : "Вихід"}
+                                </button>
+                            </>
+                        )}
+
+                        {authStatus === "error" && (
+                            <span role="alert">Не вдалося перевірити вхід. Онови сторінку.</span>
+                        )}
+
+                        {logoutError && <span role="alert">{logoutError}</span>}
                     </div>
                 </div>
             </header>
