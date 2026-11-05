@@ -1,16 +1,23 @@
 import { useNavigate } from "react-router"
 import { useState } from "react"
-import type { TestType } from "../../utils/TestStorage"
+import TestResults, { type AttemptResult } from "../TestResults/TestResults"
 import "./TestTaking.css"
-import TestResults from "../TestResults/TestResults"
 
-type TestInfoProps = {
-    test: TestType
+export type TakingQuestion =
+    | { id: number; type: "single" | "multiple"; question: string; variants: string[] }
+    | { id: number; type: "text"; question: string }
+
+type TestTakingProps = {
+    test: {
+        id: string
+        name: string
+        questions: TakingQuestion[]
+    }
 }
 
 type AnswerType = number | number[] | string | null
 
-function TestTaking({test} : TestInfoProps) {
+function TestTaking({ test }: TestTakingProps) {
     const navigate = useNavigate()
 
     const [questionNumber, setQuestionNumber] = useState(1)
@@ -18,8 +25,11 @@ function TestTaking({test} : TestInfoProps) {
         () => Array(test.questions.length).fill(null)
     )
 
-    const [showResults, setShowResults] = useState(false)
     const [showAllQuestions, setShowAllQuestions] = useState(false)
+
+    const [submitting, setSubmitting] = useState(false)
+    const [submitError, setSubmitError] = useState("")
+    const [result, setResult] = useState<AttemptResult | null>(null)
 
     const question = test.questions[questionNumber - 1]
     const currentAnswer = testAnswers[questionNumber - 1]
@@ -31,9 +41,52 @@ function TestTaking({test} : TestInfoProps) {
         return true
     }).length
 
-    return (
-        showResults ? <TestResults test={test} testAnswers={testAnswers} /> : 
+    async function finishTest() {
+        if (submitting || result) return
 
+        setSubmitting(true)
+        setSubmitError("")
+
+        try {
+            const response = await fetch(
+                `/api/tests/${encodeURIComponent(test.id)}/attempts`,
+                {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ answers: testAnswers }),
+                }
+            )
+
+            if (response.status === 401) {
+                setSubmitError("Сесія завершилася. Увійди в Quizora в іншій вкладці й повтори надсилання.")
+                return
+            }
+
+            if (!response.ok) {
+                setSubmitError("Сервер не підтвердив збереження спроби.")
+                return
+            }
+
+            const saved: AttemptResult = await response.json()
+            setResult(saved)
+        } catch {
+            setSubmitError("Зв’язок із сервером перервався. Відповіді залишилися на сторінці.")
+        } finally {
+            setSubmitting(false)
+        }
+    }
+
+    if (result) {
+        return (
+            <TestResults
+                testName={test.name}
+                result={result}
+                testAnswers={testAnswers}
+            />
+        )
+    }
+
+    return (
         <>
             <header className="header row-mode">
                 <div className="content">
@@ -151,9 +204,21 @@ function TestTaking({test} : TestInfoProps) {
                         <div className="test-taking-buttons">
                             <button className="prev-ques-button" onClick={() => setQuestionNumber(prev => prev-1)} disabled={questionNumber === 1}>Назад</button>
                             <button onClick={() => setQuestionNumber(prev => prev+1)} className={(questionNumber === test.questions.length) ? "non-display-button" : "next-ques-button"}>Далі</button>
-                            <button onClick={() => {
+                            {questionNumber === test.questions.length && (
+                                <button
+                                    className="finish-test-button"
+                                    onClick={finishTest}
+                                    disabled={submitting}
+                                >
+                                    {submitting ? "Збереження…" : "Завершити"}
+                                </button>
+                            )}
+
+                            {submitError && <p role="alert">{submitError}</p>}
+
+                            {/* <button onClick={() => {
                                 setShowResults(true)
-                            }} className={(questionNumber === test.questions.length) ? "finish-test-button" : "non-display-button"}>Завершити</button>
+                            }} className={(questionNumber === test.questions.length) ? "finish-test-button" : "non-display-button"}>Завершити</button> */}
                         </div>
                     </div>
                 </div>

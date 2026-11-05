@@ -1,53 +1,26 @@
-import { useEffect } from "react"
-import type { TestType } from "../../utils/TestStorage"
-import { UpdateUserStats } from "../../utils/UserStats"
 import { useNavigate } from "react-router"
+import type { TestType } from "../../utils/TestStorage"
 import "./TestResults.css"
 
 type AnswerType = number | number[] | string | null
 
+export type AttemptResult = {
+    attemptId: number
+    correctCount: number
+    questionCount: number
+    percent: number
+    correctByQuestion: boolean[]
+    questions: TestType["questions"]
+}
+
 type ParamsType = {
-    test: TestType,
+    testName: string
+    result: AttemptResult
     testAnswers: AnswerType[]
 }
 
-function TestResults({test, testAnswers}: ParamsType) {
+function TestResults({ testName, result, testAnswers }: ParamsType) {
     const navigate = useNavigate()
-
-    const rightAnswersCount = test.questions.filter((item, index) => {
-        const yourVariant = testAnswers[index]
-
-        if (item.type === "single") {
-            if ((typeof yourVariant === "number") && (item.rightAnswer === yourVariant)) {
-                return true
-            }
-        }
-        
-        if (item.type === "multiple") {
-            if ((Array.isArray(yourVariant) && yourVariant.length > 0) &&
-            (item.rightAnswer.length === yourVariant.length) &&
-            (item.rightAnswer.every((variant) => yourVariant.includes(variant)))) {
-                return true
-            }
-        }
-
-        if (item.type === "text") {
-            if ((typeof yourVariant === "string" && yourVariant.trim() !== "") && (item.rightAnswer.trim() === yourVariant.trim())) {
-                return true
-            }
-        }
-
-        return false
-    }).length
-
-    const rightAnswersPercent = Math.round((rightAnswersCount / test.questions.length) * 100)
-
-    useEffect(() => {
-        UpdateUserStats({
-            testId: test.id, 
-            lastResult: rightAnswersPercent
-        })
-    }, [test.id, rightAnswersPercent])
 
     return (
         <>
@@ -64,21 +37,30 @@ function TestResults({test, testAnswers}: ParamsType) {
                         <p className="test-results-label">результат тесту</p>
                         <div className="test-results-info">
                             <div>
-                                <h1>{test.name}</h1>
-                                <p className="test-results-count">Правильних відповідей: <span className="value">{rightAnswersCount} із {test.questions.length}</span></p>
+                                <h1>{testName}</h1>
+                                <p className="test-results-count">Правильних відповідей: <span className="value">{result.correctCount} із {result.questionCount}</span></p>
                             </div>
-                            <p className="test-results-percent">{rightAnswersPercent}%</p>
+                            <p className="test-results-percent">{result.percent}%</p>
                         </div>
                     </div>
 
                     <div className="test-results-review">
                         <div className="test-results-review-header">
                             <p className="test-results-review-title">Перегляд відповідей</p>
-                            <p className="test-results-question-count">Запитань: {test.questions.length}</p>
+                            <p className="test-results-question-count">Запитань: {result.questionCount}</p>
                         </div>
                         <div className="answer-review-list">
-                            {test.questions.map((item, index) => {
+                            {result.questions.map((item, index) => {
                                 const yourVariant = testAnswers[index]
+
+                                const skipped =
+                                    yourVariant == null ||
+                                    (Array.isArray(yourVariant) && yourVariant.length === 0) ||
+                                    (typeof yourVariant === "string" && yourVariant.trim() === "")
+
+                                const correct = result.correctByQuestion[index]
+                                const statusClass = skipped ? "skipped" : correct ? "right" : "wrong"
+                                const statusText = skipped ? "Пропущено" : correct ? "Правильно" : "Неправильно"
 
                                 return (
                                     <div className="answer-review-card" key={item.id}>
@@ -88,7 +70,11 @@ function TestResults({test, testAnswers}: ParamsType) {
                                             <div className="answer-review-header">
                                                 <p className="answer-review-question"> {item.question}</p>
 
-                                                {(item.type === "single") && <p className={
+                                                <p className={`answer-review-status ${statusClass}`}>
+                                                    {statusText}
+                                                </p>
+
+                                                {/* {(item.type === "single") && <p className={
                                                     typeof yourVariant === "number" ? (
                                                         (item.rightAnswer === yourVariant) ? "answer-review-status right" : "answer-review-status wrong"
                                                     ) : "answer-review-status skipped"
@@ -124,7 +110,7 @@ function TestResults({test, testAnswers}: ParamsType) {
                                                             (item.rightAnswer.trim() === yourVariant.trim()) ? "Правильно" : "Неправильно"
                                                         ) : "Пропущено"
                                                     }    
-                                                </p>}
+                                                </p>} */}
                                             </div>
 
                                             <div className="answer-review-comparison">

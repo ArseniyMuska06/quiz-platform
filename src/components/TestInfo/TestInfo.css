@@ -29,9 +29,14 @@
     letter-spacing: 1px;
 }
 
-.test-info-desc {
+.test-info-desc,
+.test-info-author {
     color: #696276;
     font-size: 14pt;
+}
+
+.test-info-author {
+    margin-top: 0.6rem;
 }
 
 .test-stats {
@@ -103,7 +108,8 @@
         padding: 2.2rem 1.5rem;
     }
 
-    .test-info-desc {
+    .test-info-desc,
+    .test-info-author {
         font-size: 12pt;
     }
 
