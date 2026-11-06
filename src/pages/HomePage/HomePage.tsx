@@ -9,6 +9,11 @@ type TestCard = {
     questionCount: number
 }
 
+type CurrentUser = {
+    id: number
+    name: string
+}
+
 function HomePage() {
     const navigate = useNavigate()
     const [tests, setTests] = useState<TestCard[]>([])
@@ -51,6 +56,8 @@ function HomePage() {
         return () => controller.abort()
     }, [retry])
 
+    const [user, setUser] = useState<CurrentUser | null>(null)
+
     const [authStatus, setAuthStatus] = useState<
         "loading" | "guest" | "signedIn" | "error"
     >("loading")
@@ -70,14 +77,24 @@ function HomePage() {
                 if (controller.signal.aborted) return
 
                 if (response.ok) {
+                    const currentUser: CurrentUser = await response.json()
+
+                    if (controller.signal.aborted) return
+
+                    setUser(currentUser)
                     setAuthStatus("signedIn")
                 } else if (response.status === 401) {
+                    setUser(null)
                     setAuthStatus("guest")
                 } else {
+                    setUser(null)
                     setAuthStatus("error")
                 }
             } catch {
-                if (!controller.signal.aborted) setAuthStatus("error")
+                if (!controller.signal.aborted) {
+                    setUser(null)
+                    setAuthStatus("error")
+                }
             }
         }
 
@@ -98,6 +115,9 @@ function HomePage() {
                 setLogoutError("Не вдалося вийти. Спробуй ще раз.")
                 return
             }
+
+            setUser(null)
+            setAuthStatus("guest")
 
             setAuthStatus("guest")
         } catch {
@@ -120,9 +140,14 @@ function HomePage() {
                             </>
                         )}
 
-                        {authStatus === "signedIn" && (
+                        {authStatus === "signedIn" && user && (
                             <>
-                                <Link className="text-button" to="/my-tests">Мої тести</Link>
+                                <span className="header-user-name">{user.name}</span>
+
+                                <Link className="text-button" to="/my-tests">
+                                    Мої тести
+                                </Link>
+
                                 <button
                                     type="button"
                                     className="text-button"

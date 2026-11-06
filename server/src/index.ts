@@ -139,15 +139,31 @@ app.post("/api/auth/login", async (request, response, next) => {
     }
 })
 
-app.get("/api/auth/me", (request, response) => {
-    const userId = request.session.userId
+app.get("/api/auth/me", async (req, res, next) => {
+    const userId = req.session.userId
 
     if (userId === undefined) {
-        response.status(401).json({ error: "Потрібно увійти" })
+        res.status(401).json({ error: "Потрібно увійти" })
         return
     }
 
-    response.json({ id: userId })
+    try {
+        const result = await pool.query(
+            "SELECT id, name FROM users WHERE id = $1",
+            [userId]
+        )
+
+        const user = result.rows[0]
+
+        if (!user) {
+            res.status(401).json({ error: "Потрібно увійти" })
+            return
+        }
+
+        res.json(user)
+    } catch (error) {
+        next(error)
+    }
 })
 
 app.post("/api/auth/logout", (request, response, next) => {
