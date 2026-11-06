@@ -38,8 +38,8 @@ function LoginPage() {
 
             if (typeof testId === "string") {
                 destination = `/${encodeURIComponent(testId)}`
-            } else if (location.state?.from === "/my-tests") {
-                destination = "/my-tests"
+            } else if (location.state?.from === "/my-tests" || location.state?.from === "/create") {
+                destination = location.state.from
             }
 
             navigate(destination, { replace: true })

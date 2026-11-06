@@ -68,6 +68,10 @@ function MyTestsPage() {
                 <div className="content">
                     <h1 className="home-title">Мої тести</h1>
 
+                    <Link className="create-test-button" to="/create">
+                        Створити тест
+                    </Link>
+
                     {loading && <p>Завантаження тестів…</p>}
 
                     {error && (

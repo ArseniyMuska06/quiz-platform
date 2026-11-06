@@ -5,6 +5,7 @@ import TestPage from './pages/TestPage/TestPage'
 import LoginPage from "./pages/LoginPage/LoginPage"
 import RegisterPage from "./pages/RegisterPage/RegisterPage"
 import MyTestsPage from "./pages/MyTestsPage/MyTestsPage"
+import CreateTestPage from "./pages/CreateTestPage/CreateTestPage"
 
 function App() {
   return (
@@ -14,6 +15,7 @@ function App() {
       <Route path="/login" element={<LoginPage />} />
       <Route path="/register" element={<RegisterPage />} />
       <Route path="/my-tests" element={<MyTestsPage />} />
+      <Route path="/create" element={<CreateTestPage />} />
     </Routes>
   )
 }
