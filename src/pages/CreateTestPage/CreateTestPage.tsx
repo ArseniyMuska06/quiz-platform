@@ -1,12 +1,54 @@
 import { Link, useNavigate } from "react-router"
 import { useEffect, useState, type FormEvent } from "react"
 
+type QuestionDraft = {
+    key: string
+    question: string
+    rightAnswer: string
+}
+
 function CreateTestPage() {
     const navigate = useNavigate()
     const [status, setStatus] = useState<"loading" | "ready" | "error">("loading")
 
     const [saving, setSaving] = useState(false)
     const [saveError, setSaveError] = useState("")
+
+    const [questions, setQuestions] = useState<QuestionDraft[]>(() => [{
+        key: crypto.randomUUID(),
+        question: "",
+        rightAnswer: "",
+    }])
+
+    function updateQuestion(
+        key: string,
+        field: "question" | "rightAnswer",
+        value: string
+    ) {
+        setQuestions(previous => previous.map(question =>
+            question.key === key
+                ? { ...question, [field]: value }
+                : question
+        ))
+    }
+
+    function addQuestion() {
+        setQuestions(previous => [
+            ...previous,
+            {
+                key: crypto.randomUUID(),
+                question: "",
+                rightAnswer: "",
+            },
+        ])
+    }
+
+    function removeQuestion(key: string) {
+        setQuestions(previous => {
+            if (previous.length === 1) return previous
+            return previous.filter(question => question.key !== key)
+        })
+    }
 
     useEffect(() => {
         const controller = new AbortController()
@@ -47,11 +89,11 @@ function CreateTestPage() {
             name: form.get("name"),
             description: form.get("description"),
             visibility: form.get("visibility"),
-            questions: [{
+            questions: questions.map(question => ({
                 type: "text",
-                question: form.get("question"),
-                rightAnswer: form.get("rightAnswer"),
-            }],
+                question: question.question,
+                rightAnswer: question.rightAnswer,
+            })),
         }
 
         setSaving(true)
@@ -122,23 +164,55 @@ function CreateTestPage() {
                     </p>
                 </fieldset>
 
-                <fieldset disabled={saving}>
-                    <legend>Запитання 1 — текстова відповідь</legend>
+                <p>Кількість запитань: {questions.length}</p>
 
-                    <p>
-                        <label>
-                            Текст запитання<br />
-                            <textarea name="question" required />
-                        </label>
-                    </p>
+                {questions.map((question, index) => (
+                    <fieldset key={question.key} disabled={saving}>
+                        <legend>Запитання {index + 1} — текстова відповідь</legend>
 
-                    <p>
-                        <label>
-                            Правильна відповідь<br />
-                            <input name="rightAnswer" required />
-                        </label>
-                    </p>
-                </fieldset>
+                        <p>
+                            <label>
+                                Текст запитання<br />
+                                <textarea
+                                    value={question.question}
+                                    onChange={event => updateQuestion(
+                                        question.key,
+                                        "question",
+                                        event.target.value
+                                    )}
+                                    required
+                                />
+                            </label>
+                        </p>
+
+                        <p>
+                            <label>
+                                Правильна відповідь<br />
+                                <input
+                                    value={question.rightAnswer}
+                                    onChange={event => updateQuestion(
+                                        question.key,
+                                        "rightAnswer",
+                                        event.target.value
+                                    )}
+                                    required
+                                />
+                            </label>
+                        </p>
+
+                        <button
+                            type="button"
+                            onClick={() => removeQuestion(question.key)}
+                            disabled={questions.length === 1}
+                        >
+                            Видалити запитання
+                        </button>
+                    </fieldset>
+                ))}
+
+                <button type="button" onClick={addQuestion} disabled={saving}>
+                    Додати запитання
+                </button>
 
                 {saveError && <p role="alert">{saveError}</p>}
 
