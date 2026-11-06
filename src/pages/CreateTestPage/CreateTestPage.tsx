@@ -1,10 +1,33 @@
 import { Link, useNavigate } from "react-router"
 import { useEffect, useState, type FormEvent } from "react"
 
+type QuestionType = "text" | "single" | "multiple"
+
+type VariantDraft = {
+    key: string
+    text: string
+    correct: boolean
+}
+
 type QuestionDraft = {
     key: string
+    type: QuestionType
     question: string
     rightAnswer: string
+    variants: VariantDraft[]
+}
+
+function createEmptyQuestion(): QuestionDraft {
+    return {
+        key: crypto.randomUUID(),
+        type: "text",
+        question: "",
+        rightAnswer: "",
+        variants: [
+            { key: crypto.randomUUID(), text: "", correct: false },
+            { key: crypto.randomUUID(), text: "", correct: false },
+        ],
+    }
 }
 
 function CreateTestPage() {
@@ -14,11 +37,9 @@ function CreateTestPage() {
     const [saving, setSaving] = useState(false)
     const [saveError, setSaveError] = useState("")
 
-    const [questions, setQuestions] = useState<QuestionDraft[]>(() => [{
-        key: crypto.randomUUID(),
-        question: "",
-        rightAnswer: "",
-    }])
+    const [questions, setQuestions] = useState<QuestionDraft[]>(() => [
+        createEmptyQuestion(),
+    ])
 
     function updateQuestion(
         key: string,
@@ -33,14 +54,8 @@ function CreateTestPage() {
     }
 
     function addQuestion() {
-        setQuestions(previous => [
-            ...previous,
-            {
-                key: crypto.randomUUID(),
-                question: "",
-                rightAnswer: "",
-            },
-        ])
+        const question = createEmptyQuestion()
+        setQuestions(previous => [...previous, question])
     }
 
     function removeQuestion(key: string) {
@@ -48,6 +63,82 @@ function CreateTestPage() {
             if (previous.length === 1) return previous
             return previous.filter(question => question.key !== key)
         })
+    }
+
+    function changeQuestionType(key: string, type: QuestionType) {
+        setQuestions(previous => previous.map(question => {
+            if (question.key !== key) return question
+
+            return {
+                ...question,
+                type,
+                variants: question.variants.map(variant => ({
+                    ...variant,
+                    correct: false,
+                })),
+            }
+        }))
+    }
+
+    function updateVariant(questionKey: string, variantKey: string, text: string) {
+        setQuestions(previous => previous.map(question => {
+            if (question.key !== questionKey) return question
+
+            return {
+                ...question,
+                variants: question.variants.map(variant =>
+                    variant.key === variantKey ? { ...variant, text } : variant
+                ),
+            }
+        }))
+    }
+
+    function selectVariant(questionKey: string, variantKey: string, checked: boolean) {
+        setQuestions(previous => previous.map(question => {
+            if (question.key !== questionKey) return question
+
+            return {
+                ...question,
+                variants: question.variants.map(variant => {
+                    if (variant.key === variantKey) {
+                        return { ...variant, correct: checked }
+                    }
+
+                    if (question.type === "single") {
+                        return { ...variant, correct: false }
+                    }
+
+                    return variant
+                }),
+            }
+        }))
+    }
+
+    function addVariant(questionKey: string) {
+        const variant = {
+            key: crypto.randomUUID(),
+            text: "",
+            correct: false,
+        }
+
+        setQuestions(previous => previous.map(question =>
+            question.key === questionKey
+                ? { ...question, variants: [...question.variants, variant] }
+                : question
+        ))
+    }
+
+    function removeVariant(questionKey: string, variantKey: string) {
+        setQuestions(previous => previous.map(question => {
+            if (question.key !== questionKey || question.variants.length <= 2) {
+                return question
+            }
+
+            return {
+                ...question,
+                variants: question.variants.filter(variant => variant.key !== variantKey),
+            }
+        }))
     }
 
     useEffect(() => {
@@ -85,15 +176,44 @@ function CreateTestPage() {
 
         const form = new FormData(event.currentTarget)
 
+        const preparedQuestions = questions.map(question => {
+            if (question.type === "text") {
+                return {
+                    type: "text",
+                    question: question.question,
+                    rightAnswer: question.rightAnswer,
+                }
+            }
+
+            const correctIndexes = question.variants.flatMap((variant, index) =>
+                variant.correct ? [index] : []
+            )
+
+            return {
+                type: question.type,
+                question: question.question,
+                variants: question.variants.map(variant => variant.text),
+                rightAnswer: question.type === "single"
+                    ? correctIndexes[0]
+                    : correctIndexes,
+            }
+        })
+
+        const missingAnswer = questions.findIndex(question =>
+            question.type !== "text" &&
+            !question.variants.some(variant => variant.correct)
+        )
+
+        if (missingAnswer !== -1) {
+            setSaveError(`Запитання ${missingAnswer + 1}: познач правильну відповідь.`)
+            return
+        }
+
         const test = {
             name: form.get("name"),
             description: form.get("description"),
             visibility: form.get("visibility"),
-            questions: questions.map(question => ({
-                type: "text",
-                question: question.question,
-                rightAnswer: question.rightAnswer,
-            })),
+            questions: preparedQuestions,
         }
 
         setSaving(true)
@@ -168,7 +288,24 @@ function CreateTestPage() {
 
                 {questions.map((question, index) => (
                     <fieldset key={question.key} disabled={saving}>
-                        <legend>Запитання {index + 1} — текстова відповідь</legend>
+                        <legend>Запитання {index + 1}</legend>
+
+                        <p>
+                            <label>
+                                Тип запитання<br />
+                                <select
+                                    value={question.type}
+                                    onChange={event => changeQuestionType(
+                                        question.key,
+                                        event.target.value as QuestionType
+                                    )}
+                                >
+                                    <option value="text">Текстова відповідь</option>
+                                    <option value="single">Одна правильна відповідь</option>
+                                    <option value="multiple">Декілька правильних відповідей</option>
+                                </select>
+                            </label>
+                        </p>
 
                         <p>
                             <label>
@@ -185,20 +322,67 @@ function CreateTestPage() {
                             </label>
                         </p>
 
-                        <p>
-                            <label>
-                                Правильна відповідь<br />
-                                <input
-                                    value={question.rightAnswer}
-                                    onChange={event => updateQuestion(
-                                        question.key,
-                                        "rightAnswer",
-                                        event.target.value
-                                    )}
-                                    required
-                                />
-                            </label>
-                        </p>
+                        {question.type === "text" ? (
+                            <p>
+                                <label>
+                                    Правильна відповідь<br />
+                                    <input
+                                        value={question.rightAnswer}
+                                        onChange={event => updateQuestion(
+                                            question.key,
+                                            "rightAnswer",
+                                            event.target.value
+                                        )}
+                                        required
+                                    />
+                                </label>
+                            </p>
+                        ) : (
+                            <div>
+                                <p>Познач правильні варіанти відповідей.</p>
+
+                                {question.variants.map((variant, variantIndex) => (
+                                    <div key={variant.key}>
+                                        <label>
+                                            <input
+                                                type={question.type === "single" ? "radio" : "checkbox"}
+                                                name={`correct-${question.key}`}
+                                                checked={variant.correct}
+                                                onChange={event => selectVariant(
+                                                    question.key,
+                                                    variant.key,
+                                                    event.target.checked
+                                                )}
+                                            />
+                                            Правильний варіант {variantIndex + 1}
+                                        </label>
+
+                                        <input
+                                            aria-label={`Текст варіанта ${variantIndex + 1}`}
+                                            value={variant.text}
+                                            onChange={event => updateVariant(
+                                                question.key,
+                                                variant.key,
+                                                event.target.value
+                                            )}
+                                            required
+                                        />
+
+                                        <button
+                                            type="button"
+                                            onClick={() => removeVariant(question.key, variant.key)}
+                                            disabled={question.variants.length <= 2}
+                                        >
+                                            Видалити варіант
+                                        </button>
+                                    </div>
+                                ))}
+
+                                <button type="button" onClick={() => addVariant(question.key)}>
+                                    Додати варіант
+                                </button>
+                            </div>
+                        )}
 
                         <button
                             type="button"
