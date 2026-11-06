@@ -15,6 +15,8 @@ function MyTestsPage() {
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState("")
     const [retry, setRetry] = useState(0)
+    const [deletingId, setDeletingId] = useState<string | null>(null)
+    const [deleteError, setDeleteError] = useState("")
 
     useEffect(() => {
         const controller = new AbortController()
@@ -55,6 +57,42 @@ function MyTestsPage() {
         return () => controller.abort()
     }, [navigate, retry])
 
+    async function deleteTest(test: MyTest) {
+        if (deletingId !== null) return
+
+        const confirmed = window.confirm(
+            `Видалити тест «${test.name}»? Усі результати його проходження також буде видалено. Цю дію неможливо скасувати.`
+        )
+
+        if (!confirmed) return
+
+        setDeletingId(test.id)
+        setDeleteError("")
+
+        try {
+            const response = await fetch(
+                `/api/tests/${encodeURIComponent(test.id)}`,
+                { method: "DELETE" }
+            )
+
+            if (response.status === 401) {
+                navigate("/login", { state: { from: "/my-tests" } })
+                return
+            }
+
+            if (!response.ok) {
+                setDeleteError("Не вдалося видалити тест. Онови список і спробуй ще раз.")
+                return
+            }
+
+            setTests(previous => previous.filter(item => item.id !== test.id))
+        } catch {
+            setDeleteError("Не вдалося отримати відповідь сервера. Онови список, щоб перевірити результат.")
+        } finally {
+            setDeletingId(null)
+        }
+    }
+
     return (
         <>
             <header className="header row-mode">
@@ -87,25 +125,32 @@ function MyTestsPage() {
                         <p>Ти ще не створив жодного тесту.</p>
                     )}
 
+                    {deleteError && <p role="alert">{deleteError}</p>}
+
                     {!loading && !error && (
                         <div className="tests-list">
                             {tests.map(test => (
-                                <Link
-                                    key={test.id}
-                                    className="test-preview"
-                                    to={`/${test.id}`}
-                                >
-                                    <div>
-                                        <strong>{test.name}</strong>
-                                        <p>{test.description}</p>
-                                        <p>Кількість запитань: {test.questionCount}</p>
-                                        <p>
-                                            {test.visibility === "public"
-                                                ? "Публічний"
-                                                : "Особистий"}
-                                        </p>
-                                    </div>
-                                </Link>
+                                <div key={test.id}>
+                                    <Link className="test-preview" to={`/${test.id}`}>
+                                        <div>
+                                            <strong>{test.name}</strong>
+                                            <p>{test.description}</p>
+                                            <p>Кількість запитань: {test.questionCount}</p>
+                                            <p>
+                                                {test.visibility === "public" ? "Публічний" : "Особистий"}
+                                            </p>
+                                        </div>
+                                    </Link>
+
+                                    <button
+                                        type="button"
+                                        className="text-button"
+                                        onClick={() => deleteTest(test)}
+                                        disabled={deletingId !== null}
+                                    >
+                                        {deletingId === test.id ? "Видалення…" : "Видалити"}
+                                    </button>
+                                </div>
                             ))}
                         </div>
                     )}

@@ -428,6 +428,35 @@ app.post("/api/tests", async (request, response, next) => {
     }
 })
 
+app.delete("/api/tests/:testId", async (request, response, next) => {
+    const userId = request.session.userId
+
+    if (userId === undefined) {
+        response.status(401).json({ error: "Щоб видалити тест, увійди в акаунт." })
+        return
+    }
+
+    try {
+        const result = await pool.query(
+            `DELETE FROM tests
+             WHERE id = $1 AND author_id = $2
+             RETURNING id`,
+            [request.params.testId, userId]
+        )
+
+        if (result.rows.length === 0) {
+            response.status(404).json({
+                error: "Тест не знайдено або ти не є його автором.",
+            })
+            return
+        }
+
+        response.sendStatus(204)
+    } catch (error) {
+        next(error)
+    }
+})
+
 app.listen(port, () => {
     console.log(`Quizora API запущено на http://localhost:${port}`)
 })
