@@ -158,7 +158,7 @@ function TestTaking({ test }: TestTakingProps) {
                                 {question.variants.map((item, index) => {
                                     return (
                                         <div className="single-answer" key={index}>
-                                            <input type="radio" name={"ques_" + questionNumber} id={"variant_" + index} onChange={() => setTestAnswers((prev) => {
+                                            <input type="radio" disabled={submitting} name={"ques_" + questionNumber} id={"variant_" + index} onChange={() => setTestAnswers((prev) => {
                                                     const updated = [...prev]
                                                     updated[questionNumber - 1] = index
                                                     return updated
@@ -175,7 +175,7 @@ function TestTaking({ test }: TestTakingProps) {
                                 {question.variants.map((item, index) => {
                                     return (
                                         <div className="multiple-answer" key={index}>
-                                            <input type="checkbox" name={"ques_" + questionNumber} id={"variant_" + index} onChange={(event) => {
+                                            <input type="checkbox" disabled={submitting} name={"ques_" + questionNumber} id={"variant_" + index} onChange={(event) => {
                                                 const checked = event?.currentTarget.checked
 
                                                 setTestAnswers((prev) => {
@@ -208,7 +208,7 @@ function TestTaking({ test }: TestTakingProps) {
                         {(question.type === "text") && (
                             <div className="text-answer">
                                 <p>Ваша відповідь</p>
-                                <input placeholder="Введіть відповідь" type="text" name={"ques_" + questionNumber} onChange={(e) => {
+                                <input placeholder="Введіть відповідь" type="text" disabled={submitting} name={"ques_" + questionNumber} onChange={(e) => {
                                     setTestAnswers((prev) => {
                                         const updated = [...prev]
                                         updated[questionNumber - 1] = e.target.value
