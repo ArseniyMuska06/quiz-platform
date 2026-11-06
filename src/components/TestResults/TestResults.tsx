@@ -17,9 +17,10 @@ type ParamsType = {
     testName: string
     result: AttemptResult
     testAnswers: AnswerType[]
+    onRestart: () => void
 }
 
-function TestResults({ testName, result, testAnswers }: ParamsType) {
+function TestResults({ testName, result, testAnswers, onRestart }: ParamsType) {
     const navigate = useNavigate()
 
     return (
@@ -73,44 +74,6 @@ function TestResults({ testName, result, testAnswers }: ParamsType) {
                                                 <p className={`answer-review-status ${statusClass}`}>
                                                     {statusText}
                                                 </p>
-
-                                                {/* {(item.type === "single") && <p className={
-                                                    typeof yourVariant === "number" ? (
-                                                        (item.rightAnswer === yourVariant) ? "answer-review-status right" : "answer-review-status wrong"
-                                                    ) : "answer-review-status skipped"
-                                                }>
-                                                    {
-                                                        typeof yourVariant === "number" ? (
-                                                            (item.rightAnswer === yourVariant) ? "Правильно" : "Неправильно"
-                                                        ) : "Пропущено"
-                                                    }
-                                                </p>}
-
-                                                {(item.type === "multiple") && <p className={
-                                                    (Array.isArray(yourVariant) && yourVariant.length > 0) ? (
-                                                        ((item.rightAnswer.length === yourVariant.length) && 
-                                                        (item.rightAnswer.every((variant) => yourVariant.includes(variant)))) ? "answer-review-status right" : "answer-review-status wrong"
-                                                    ) : "answer-review-status skipped"
-                                                }>
-                                                    {
-                                                        (Array.isArray(yourVariant) && yourVariant.length > 0) ? (
-                                                            ((item.rightAnswer.length === yourVariant.length) && 
-                                                            (item.rightAnswer.every((variant) => yourVariant.includes(variant)))) ? "Правильно" : "Неправильно"
-                                                        ) : "Пропущено"
-                                                    }
-                                                </p>}
-
-                                                {(item.type === "text") && <p className={
-                                                    (typeof yourVariant === "string" && yourVariant.trim() !== "") ? (
-                                                        (item.rightAnswer.trim() === yourVariant.trim()) ? "answer-review-status right" : "answer-review-status wrong"
-                                                    ) : "answer-review-status skipped"
-                                                }>
-                                                        {
-                                                        (typeof yourVariant === "string" && yourVariant.trim() !== "") ? (
-                                                            (item.rightAnswer.trim() === yourVariant.trim()) ? "Правильно" : "Неправильно"
-                                                        ) : "Пропущено"
-                                                    }    
-                                                </p>} */}
                                             </div>
 
                                             <div className="answer-review-comparison">
@@ -168,7 +131,9 @@ function TestResults({ testName, result, testAnswers }: ParamsType) {
                                     </div>
                                 )})}
                             </div>
-                        <button className="go-to-home-button" onClick={() => navigate('/')}>На головну</button>
+
+                        <button type="button" className="go-to-home-button" onClick={onRestart}>Пройти ще раз</button>
+                        <button type="button" className="go-to-home-button" onClick={() => navigate('/')}>На головну</button>
                     </div>
                 </div>
             </main>

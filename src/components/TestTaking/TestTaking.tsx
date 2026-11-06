@@ -44,6 +44,12 @@ function TestTaking({ test }: TestTakingProps) {
     async function finishTest() {
         if (submitting || result) return
 
+        const confirmed = window.confirm(
+            "Завершити тест? Після завершення змінити відповіді цієї спроби буде неможливо."
+        )
+
+        if (!confirmed) return
+
         setSubmitting(true)
         setSubmitError("")
 
@@ -76,12 +82,23 @@ function TestTaking({ test }: TestTakingProps) {
         }
     }
 
+    function restartTest() {
+        setQuestionNumber(1)
+        setTestAnswers(Array(test.questions.length).fill(null))
+        setShowAllQuestions(false)
+        setSubmitError("")
+        setResult(null)
+
+        window.scrollTo(0, 0)
+    }
+
     if (result) {
         return (
             <TestResults
                 testName={test.name}
                 result={result}
                 testAnswers={testAnswers}
+                onRestart={restartTest}
             />
         )
     }
