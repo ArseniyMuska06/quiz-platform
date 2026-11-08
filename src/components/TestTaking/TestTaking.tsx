@@ -218,6 +218,8 @@ function TestTaking({ test }: TestTakingProps) {
                             </div>
                         )}
 
+                        {submitError && <p style={{marginTop: "1rem"}} role="alert">{submitError}</p>}
+
                         <div className="test-taking-buttons">
                             <button className="prev-ques-button" onClick={() => setQuestionNumber(prev => prev-1)} disabled={questionNumber === 1}>Назад</button>
                             <button onClick={() => setQuestionNumber(prev => prev+1)} className={(questionNumber === test.questions.length) ? "non-display-button" : "next-ques-button"}>Далі</button>
@@ -230,12 +232,6 @@ function TestTaking({ test }: TestTakingProps) {
                                     {submitting ? "Збереження…" : "Завершити"}
                                 </button>
                             )}
-
-                            {submitError && <p role="alert">{submitError}</p>}
-
-                            {/* <button onClick={() => {
-                                setShowResults(true)
-                            }} className={(questionNumber === test.questions.length) ? "finish-test-button" : "non-display-button"}>Завершити</button> */}
                         </div>
                     </div>
                 </div>

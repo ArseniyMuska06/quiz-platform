@@ -26,13 +26,3 @@ export type TestType = {
     description: string,
     questions: QuestionType[]
 }
-
-function TestStorage() {
-    const QuizoraTests: TestType[] = JSON.parse(
-        localStorage.getItem("QuizoraTests") ?? "[]"
-    )
-
-    return QuizoraTests
-}
-
-export default TestStorage

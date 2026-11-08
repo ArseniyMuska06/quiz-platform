@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router"
-import type { TestType } from "../../utils/TestStorage"
+import type { TestType } from "../../types/test"
 import "./TestResults.css"
 
 type AnswerType = number | number[] | string | null

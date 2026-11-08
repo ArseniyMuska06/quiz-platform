@@ -3,7 +3,7 @@ import { pool } from "./db.js"
 import * as argon2 from "argon2"
 import session from "express-session"
 import connectPgSimple from "connect-pg-simple"
-import { gradeTest } from "./gradeTest.js"
+import { gradeTest } from "./GradeTest.js"
 import { randomUUID } from "node:crypto"
 import { validateTest } from "./validateTest.js"
 
