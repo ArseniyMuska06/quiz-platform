@@ -1,5 +1,6 @@
 import { Link, useNavigate } from "react-router"
 import { useEffect, useState, type FormEvent } from "react"
+import './CreateTestPage.css'
 
 type QuestionType = "text" | "single" | "multiple"
 

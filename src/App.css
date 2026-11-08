@@ -51,7 +51,7 @@ button, input {
     background-color: transparent;
     border: none;
     font-size: 11pt;
-    font-weight: 500;
+    font-weight: 600;
     color: #514b62;
     transition: color 0.2s ease;
 }
@@ -92,6 +92,28 @@ button, input {
     font-weight: 700;
     color: #7045d5;
     font-size: 20pt;
+}
+
+.test-preview {
+    position: relative;
+    background-color: #fefeff;
+    border: 1.5px solid #efedf5;
+    height: 200px;
+    display: flex;
+    align-items: end;
+    font-size: 17pt;
+    font-weight: 600;
+    padding: 1.5rem;
+    border-radius: 17px;
+    transition: border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+    box-shadow: 0 0 20px rgba(207, 206, 206, 0.268);
+}
+
+.test-preview:hover {
+    border-color: #d8c9f8;
+    transform: translateY(-3px);
+    cursor: pointer;
+    box-shadow: 0 0 20px rgba(168, 168, 168, 0.518);
 }
 
 @media screen and (max-width: 640px) {

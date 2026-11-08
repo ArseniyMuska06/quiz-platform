@@ -1,0 +1,167 @@
+.main.my-tests-page {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
+
+.content.my-tests-page {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
+
+.create-test-button {
+    border: 1px solid #7045d5;
+    background-color: #7045d5;
+    color: white;
+    padding: 0.8rem 1.4rem;
+    font-size: 11.5pt;
+    font-weight: 700;
+    border-radius: 10px;
+    transition: background 0.2s ease, border 0.2s ease, transform 0.15s ease;
+    box-shadow: 0 10px 10px rgba(176, 175, 175, 0.325);
+}
+
+.create-test-button:hover {
+    transform: translateY(-1.5px);
+    border-color: #6037c5;
+    background-color: #6037c5;
+    cursor: pointer;
+}
+
+.my-tests-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    text-align: center;
+    margin-bottom: 2.5rem;
+}
+
+.my-tests-title {
+    font-size: 36pt;
+    font-weight: 800;
+    letter-spacing: -1.5px;
+}
+
+.my-tests-empty-state {
+    padding: 1.5rem;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+    background-color: white;
+    border: 1px dashed #dcd2f2;
+    border-radius: 20px;
+}
+
+.my-tests-empty-state p {
+    color: #817b91;
+    text-align: center;
+    max-width: 45ch;
+    line-height: 1.5;
+}
+
+.test-preview .visibility {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    background-color: #f0eafd;
+    color: #7e4bdb;
+    display: inline-block;
+    padding: 0.25rem 0.5rem;
+    border-radius: 20px;
+    font-size: 8pt;
+    text-transform: uppercase;
+    font-weight: 700;
+    letter-spacing: 1px;
+}
+
+.delete-test-button {
+    width: 100%;
+    background-color: #d54545;
+    border: 1px solid #d54545;
+    border-top: none;
+    border-bottom-left-radius: 17px;
+    border-bottom-right-radius: 17px;
+    color: white;
+    padding: 1rem 0;
+    transition: background-color 0.2s ease, border 0.2s ease;
+}
+
+.delete-test-button:hover {
+    cursor: pointer;
+    background-color: #b83a3a;
+    border-color: #b83a3a;
+}
+
+.created-test-preview {
+    background-color: transparent;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    border-radius: 17px;
+}
+
+.created-test-preview:hover {
+    cursor: pointer;
+    transform: translateY(-3px);
+    box-shadow: 0 0 20px rgba(168, 168, 168, 0.518);
+}
+
+.created-test-preview .test-preview {
+    border-bottom: none;
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+    transform: none;
+    box-shadow: none;
+}
+
+.created-test-preview .test-preview:hover {
+    border-color: #d8c9f8;
+}
+
+.my-tests-error-state {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.my-tests-error-state h2 {
+    margin-bottom: 0.2rem;
+}
+
+.my-tests-error-state p {
+    margin-bottom: 1rem;
+}
+
+.my-tests-error-state button {
+    border: 1px solid #7045d5;
+    background-color: #7045d5;
+    color: white;
+    padding: 0.65rem 1.4rem;
+    font-size: 12pt;
+    font-weight: 600;
+    border-radius: 10px;
+    transition: background 0.2s ease, border 0.2s ease;
+    box-shadow: 0 10px 10px rgba(176, 175, 175, 0.325);
+}
+
+.my-tests-error-state button:hover {
+    border-color: #6037c5;
+    background-color: #6037c5;
+    cursor: pointer;
+}
+
+@media screen and (max-width: 640px) {
+    .my-tests-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1.7rem;
+    }
+
+    .my-tests-title {
+        font-size: 30pt;
+    }
+}

@@ -1,47 +1,30 @@
-.create-test-button {
+.register-test-button {
     border: 1px solid #7045d5;
     background-color: #7045d5;
     color: white;
     padding: 0.65rem 1.4rem;
-    font-size: 11pt;
-    font-weight: 500;
+    font-size: 12pt;
+    font-weight: 600;
     border-radius: 10px;
-    transition: color 0.15s ease, border 0.15s ease, transform 0.15s ease;
+    transition: background 0.2s ease, border 0.2s ease;
     box-shadow: 0 10px 10px rgba(176, 175, 175, 0.325);
 }
 
-.create-test-button:hover {
+.register-test-button:hover {
     border-color: #6037c5;
     background-color: #6037c5;
     cursor: pointer;
-    transform: translateY(-1.5px);
+}
+
+.header-user-name {
+    color: #817b91;
+    font-weight: 600;
 }
 
 .tests-list {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 1.75rem;
-}
-
-.test-preview {
-    background-color: #fefeff;
-    border: 1.5px solid #efedf5;
-    height: 200px;
-    display: flex;
-    align-items: end;
-    font-size: 17pt;
-    font-weight: 600;
-    padding: 1.5rem;
-    border-radius: 17px;
-    transition: border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
-    box-shadow: 0 0 20px rgba(207, 206, 206, 0.268);
-}
-
-.test-preview:hover {
-    border-color: #d8c9f8;
-    transform: translateY(-3px);
-    cursor: pointer;
-    box-shadow: 0 0 20px rgba(168, 168, 168, 0.518);
 }
 
 @media screen and (max-width: 1024px) {

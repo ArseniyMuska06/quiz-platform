@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import { Link, useNavigate } from "react-router"
+import { useNavigate } from "react-router"
 import "./HomePage.css"
 
 type TestCard = {
@@ -135,18 +135,18 @@ function HomePage() {
                     <div className="header-buttons">
                         {authStatus === "guest" && (
                             <>
-                                <Link className="text-button" to="/login">Вхід</Link>
-                                <Link className="text-button" to="/register">Реєстрація</Link>
+                                <button type="button" className="text-button" onClick={() => navigate('/login')}>Вхід</button>
+                                <button type="button" className="register-test-button" onClick={() => navigate('/register')}>Реєстрація</button>
                             </>
                         )}
 
                         {authStatus === "signedIn" && user && (
                             <>
-                                <span className="header-user-name">{user.name}</span>
+                                <p className="header-user-name">{user.name}</p>
 
-                                <Link className="text-button" to="/my-tests">
+                                <button type="button" className="text-button" onClick={() => navigate('/my-tests')}>
                                     Мої тести
-                                </Link>
+                                </button>
 
                                 <button
                                     type="button"

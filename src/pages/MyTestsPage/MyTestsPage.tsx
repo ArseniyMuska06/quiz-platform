@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react"
-import { Link, useNavigate } from "react-router"
+import { useNavigate } from "react-router"
+import './MyTestsPage.css'
 
 type MyTest = {
     id: string
@@ -97,23 +98,23 @@ function MyTestsPage() {
         <>
             <header className="header row-mode">
                 <div className="content">
-                    <Link className="quizora-logo" to="/">Quizora</Link>
-                    <Link className="text-button" to="/">Усі тести</Link>
+                    <p className="quizora-logo">Quizora</p>
+                    <button type="button" className="text-button" onClick={() => navigate('/')}>Усі тести</button>
                 </div>
             </header>
 
-            <main className="main">
-                <div className="content">
-                    <h1 className="home-title">Мої тести</h1>
-
-                    <Link className="create-test-button" to="/create">
-                        Створити тест
-                    </Link>
+            <main className="main my-tests-page">
+                <div className="content my-tests-page">
+                    <div className="my-tests-header">
+                        <h1 className="my-tests-title">Мої тести</h1>
+                        <button type="button" className="create-test-button" onClick={() => navigate('/create')}>Створити тест</button>
+                    </div>
 
                     {loading && <p>Завантаження тестів…</p>}
 
                     {error && (
-                        <div>
+                        <div className="my-tests-error-state">
+                            <h2>Помилка</h2>
                             <p role="alert">{error}</p>
                             <button onClick={() => setRetry(value => value + 1)}>
                                 Спробувати ще раз
@@ -122,7 +123,11 @@ function MyTestsPage() {
                     )}
 
                     {!loading && !error && tests.length === 0 && (
-                        <p>Ти ще не створив жодного тесту.</p>
+                        <div className="my-tests-empty-state">
+                            <h2>У вас ще немає тестів</h2>
+                            <p>Створіть перший тест і додайте запитання з потрібними типами відповідей</p>
+                            <button type="button" className="create-test-button" onClick={() => navigate('/create')}>Створити перший тест</button>
+                        </div>
                     )}
 
                     {deleteError && <p role="alert">{deleteError}</p>}
@@ -130,21 +135,17 @@ function MyTestsPage() {
                     {!loading && !error && (
                         <div className="tests-list">
                             {tests.map(test => (
-                                <div key={test.id}>
-                                    <Link className="test-preview" to={`/${test.id}`}>
-                                        <div>
-                                            <strong>{test.name}</strong>
-                                            <p>{test.description}</p>
-                                            <p>Кількість запитань: {test.questionCount}</p>
-                                            <p>
-                                                {test.visibility === "public" ? "Публічний" : "Особистий"}
-                                            </p>
-                                        </div>
-                                    </Link>
+                                <div className="created-test-preview" key={test.id}>
+                                    <div className="test-preview" onClick={() => navigate(`/${test.id}`)} key={test.id}>
+                                        <p>{test.name}</p>
+                                        <p className="visibility">
+                                            {test.visibility === "public" ? "Публічний" : "Особистий"}
+                                        </p>
+                                    </div>
 
                                     <button
                                         type="button"
-                                        className="text-button"
+                                        className="delete-test-button"
                                         onClick={() => deleteTest(test)}
                                         disabled={deletingId !== null}
                                     >
@@ -156,6 +157,13 @@ function MyTestsPage() {
                     )}
                 </div>
             </main>
+
+            <footer className="footer">
+                <div className="content">
+                    <p>Quizora — створюй тести та перевіряй знання</p>
+                    <p>© 2026 Quizora</p>
+                </div>
+            </footer>
         </>
     )
 }
