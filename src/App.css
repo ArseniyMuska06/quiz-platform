@@ -116,6 +116,16 @@ button, input {
     box-shadow: 0 0 20px rgba(168, 168, 168, 0.518);
 }
 
+.purple-link {
+    color: #7045d5;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.purple-link:hover {
+    color: #6037c5;
+}
+
 @media screen and (max-width: 640px) {
     .content {
         padding-left: 1.5rem;

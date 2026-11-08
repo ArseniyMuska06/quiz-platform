@@ -114,7 +114,6 @@
 .text-answer input:focus-visible {
     border: 1px solid #7045d5;
     outline: 4px solid #eee9fb;
-    
 }
 
 .non-display-button {

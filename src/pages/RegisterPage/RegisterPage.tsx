@@ -1,5 +1,6 @@
 import { useState, type FormEvent } from "react"
 import { Link, useLocation, useNavigate } from "react-router"
+import '../../styles/Auth.css'
 
 function RegisterPage() {
     const navigate = useNavigate()
@@ -43,57 +44,73 @@ function RegisterPage() {
     }
 
     return (
-        <main className="main">
-            <div className="content">
-                <Link to="/">Усі тести</Link>
-                <h1>Реєстрація</h1>
+        <>
+            <header className="header">
+                <div className="content">
+                    <p className="quizora-logo">Quizora</p>
+                    <div className="header-buttons">
+                        <button type="button" className="text-button" onClick={() => navigate('/login')}>Вхід</button>
+                    </div>
+                </div>
+            </header>
 
-                <form onSubmit={handleSubmit}>
-                    <p>
-                        <label>
-                            Ім’я<br />
-                            <input name="name" autoComplete="name" required />
-                        </label>
-                    </p>
+            <main className="main">
+                <div className="content">
+                    <div className="auth-card">
+                        <h1>Реєстрація</h1>
+                        <p className="auth-description">Зареєструйтеся, щоб створювати власні тести</p>
 
-                    <p>
-                        <label>
-                            Електронна пошта<br />
-                            <input
-                                name="email"
-                                type="email"
-                                autoComplete="email"
-                                required
-                            />
-                        </label>
-                    </p>
+                        <form onSubmit={handleSubmit}>
+                            <div className="auth-field">
+                                <p>Електронна пошта</p>
+                                <input name="name" autoComplete="name" placeholder="Введіть ваше ім'я" required />
+                            </div>
 
-                    <p>
-                        <label>
-                            Пароль (щонайменше 15 символів)<br />
-                            <input
-                                name="password"
-                                type="password"
-                                autoComplete="new-password"
-                                minLength={15}
-                                required
-                            />
-                        </label>
-                    </p>
+                            <div className="auth-field">
+                                <p>Електронна пошта</p>
+                                <input
+                                    name="email"
+                                    type="email"
+                                    autoComplete="email"
+                                    placeholder="name@example.com"
+                                    required
+                                />
+                            </div>
 
-                    {error && <p role="alert">{error}</p>}
+                            <div className="auth-field">
+                                <p>Пароль (щонайменше 15 символів)</p>
+                                <input
+                                    name="password"
+                                    type="password"
+                                    autoComplete="new-password"
+                                    minLength={15}
+                                    placeholder="Введіть пароль"
+                                    required
+                                />
+                            </div>
 
-                    <button type="submit" disabled={submitting}>
-                        {submitting ? "Створення акаунта…" : "Зареєструватися"}
-                    </button>
-                </form>
+                            {error && <p role="alert">{error}</p>}
 
-                <p>
-                    Уже маєш акаунт?{" "}
-                    <Link to="/login" state={location.state}>Увійти</Link>
-                </p>
-            </div>
-        </main>
+                            <button className="auth-submit-button" type="submit" disabled={submitting}>
+                                {submitting ? "Створення акаунта…" : "Зареєструватися"}
+                            </button>
+                        </form>
+
+                        <p className="auth-switch-link">
+                            Уже маєш акаунт?{" "}
+                            <Link className="purple-link" to="/login" state={location.state}>Увійти</Link>
+                        </p>
+                    </div>
+                </div>
+            </main>
+
+            <footer className="footer">
+                <div className="content">
+                    <p>Quizora — створюй тести та перевіряй знання</p>
+                    <p>© 2026 Quizora</p>
+                </div>
+            </footer>
+        </>
     )
 }
 

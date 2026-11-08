@@ -1,5 +1,6 @@
 import { useState, type FormEvent } from "react"
 import { Link, useLocation, useNavigate } from "react-router"
+import '../../styles/Auth.css'
 
 function LoginPage() {
     const navigate = useNavigate()
@@ -51,52 +52,69 @@ function LoginPage() {
     }
 
     return (
-        <main className="main">
-            <div className="content">
-                <Link to="/">Усі тести</Link>
-                <h1>Вхід у Quizora</h1>
+        <>
+            <header className="header">
+                <div className="content">
+                    <p className="quizora-logo">Quizora</p>
+                    <div className="header-buttons">
+                        <button type="button" className="text-button" onClick={() => navigate('/register')}>Реєстрація</button>
+                    </div>
+                </div>
+            </header>
 
-                <form onSubmit={handleSubmit}>
-                    <p>
-                        <label>
-                            Електронна пошта
-                            <br />
-                            <input
-                                type="email"
-                                autoComplete="email"
-                                value={email}
-                                onChange={event => setEmail(event.target.value)}
-                                required
-                            />
-                        </label>
-                    </p>
+            <main className="main">
+                <div className="content">
+                    <div className="auth-card">
+                        <h1>Вхід</h1>
+                        <p className="auth-description">Увійдіть, щоб створювати та керувати власними тестами</p>
 
-                    <p>
-                        <label>
-                            Пароль
-                            <br />
-                            <input
-                                type="password"
-                                autoComplete="current-password"
-                                value={password}
-                                onChange={event => setPassword(event.target.value)}
-                                required
-                            />
-                        </label>
-                    </p>
+                        <form onSubmit={handleSubmit}>
+                            <div className="auth-field">
+                                <p>Електронна пошта</p>
+                                <input
+                                    type="email"
+                                    autoComplete="email"
+                                    value={email}
+                                    onChange={event => setEmail(event.target.value)}
+                                    placeholder="name@example.com"
+                                    required
+                                />
+                            </div>
 
-                    {error && <p role="alert">{error}</p>}
+                            <div className="auth-field">
+                                <p>Пароль</p>
+                                <input
+                                    type="password"
+                                    autoComplete="current-password"
+                                    value={password}
+                                    onChange={event => setPassword(event.target.value)}
+                                    placeholder="Введіть пароль"
+                                    required
+                                />
+                            </div>
 
-                    <button type="submit" disabled={loading}>
-                        {loading ? "Входимо…" : "Увійти"}
-                    </button>
-                </form>
-                <p>
-                    Ще не маєш акаунта?{" "}
-                    <Link to="/register" state={location.state}>Зареєструватися</Link>
-                </p>
-            </div>
-        </main>
+                            {error && <p role="alert">{error}</p>}
+
+                            <button className="auth-submit-button" type="submit" disabled={loading}>
+                                {loading ? "Входимо…" : "Увійти"}
+                            </button>
+                        </form>
+
+                        <p className="auth-switch-link">
+                            Ще не маєте акаунта?{" "}
+                            <Link className="purple-link" to="/register" state={location.state}>Зареєструватися</Link>
+                        </p>
+                    </div>
+                </div>
+            </main>
+
+            <footer className="footer">
+                <div className="content">
+                    <p>Quizora — створюй тести та перевіряй знання</p>
+                    <p>© 2026 Quizora</p>
+                </div>
+            </footer>
+        </>
     )
 }
 
