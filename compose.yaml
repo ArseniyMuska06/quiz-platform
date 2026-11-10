@@ -1,6 +1,8 @@
 services:
   db:
-    image: postgres:18
+    build:
+      context: ./server
+      dockerfile: Dockerfile.db
     environment:
       POSTGRES_DB: quizora
       POSTGRES_USER: quizora_app
