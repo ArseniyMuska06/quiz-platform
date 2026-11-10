@@ -62,7 +62,7 @@ function RegisterPage() {
 
                         <form onSubmit={handleSubmit}>
                             <div className="auth-field">
-                                <p>Електронна пошта</p>
+                                <p>Ім'я користувача</p>
                                 <input name="name" autoComplete="name" placeholder="Введіть ваше ім'я" required />
                             </div>
 

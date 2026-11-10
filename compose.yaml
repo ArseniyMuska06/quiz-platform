@@ -1,0 +1,29 @@
+services:
+  db:
+    image: postgres:18
+    environment:
+      POSTGRES_DB: quizora
+      POSTGRES_USER: quizora_app
+      POSTGRES_PASSWORD: ${PGPASSWORD:?Set PGPASSWORD in server/.env}
+    volumes:
+      - quizora_pgdata:/var/lib/postgresql
+  backend:
+    build: ./server
+    env_file:
+      - ./server/.env
+    environment:
+      PGHOST: db
+      PGPORT: "5432"
+    depends_on:
+      - db
+  frontend:
+    build: .
+    environment:
+      API_PROXY_TARGET: http://backend:3001
+    ports:
+      - "127.0.0.1:5174:5173"
+    depends_on:
+      - backend
+
+volumes:
+  quizora_pgdata:
