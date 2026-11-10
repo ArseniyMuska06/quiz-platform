@@ -11,6 +11,7 @@ services:
       - quizora_pgdata:/var/lib/postgresql
   backend:
     build: ./server
+    command: ["node", "--import", "tsx", "src/index.ts"]
     env_file:
       - ./server/.env
     environment:
@@ -18,10 +19,18 @@ services:
       PGPORT: "5432"
     depends_on:
       - db
+    develop:
+      watch:
+        - action: sync+restart
+          path: ./server/src
+          target: /app/src
   frontend:
     build: .
     environment:
       API_PROXY_TARGET: http://backend:3001
+      CHOKIDAR_USEPOLLING: "true"
+    volumes:
+      - ./src:/app/src
     ports:
       - "127.0.0.1:5174:5173"
     depends_on:
