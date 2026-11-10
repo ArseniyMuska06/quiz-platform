@@ -11,25 +11,6 @@
     flex: 1;
 }
 
-.create-test-button {
-    border: 1px solid #7045d5;
-    background-color: #7045d5;
-    color: white;
-    padding: 0.8rem 1.4rem;
-    font-size: 11.5pt;
-    font-weight: 700;
-    border-radius: 10px;
-    transition: background 0.2s ease, border 0.2s ease, transform 0.15s ease;
-    box-shadow: 0 10px 10px rgba(176, 175, 175, 0.325);
-}
-
-.create-test-button:hover {
-    transform: translateY(-1.5px);
-    border-color: #6037c5;
-    background-color: #6037c5;
-    cursor: pointer;
-}
-
 .my-tests-header {
     display: flex;
     justify-content: space-between;

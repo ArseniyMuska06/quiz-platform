@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react"
 import { useNavigate } from "react-router"
+import { useAuth } from "../../hooks/useAuth"
 import "./HomePage.css"
 
 type TestCard = {
@@ -7,11 +8,6 @@ type TestCard = {
     name: string
     description: string
     questionCount: number
-}
-
-type CurrentUser = {
-    id: number
-    name: string
 }
 
 function HomePage() {
@@ -56,76 +52,7 @@ function HomePage() {
         return () => controller.abort()
     }, [retry])
 
-    const [user, setUser] = useState<CurrentUser | null>(null)
-
-    const [authStatus, setAuthStatus] = useState<
-        "loading" | "guest" | "signedIn" | "error"
-    >("loading")
-
-    const [loggingOut, setLoggingOut] = useState(false)
-    const [logoutError, setLogoutError] = useState("")
-
-    useEffect(() => {
-        const controller = new AbortController()
-
-        async function checkSession() {
-            try {
-                const response = await fetch("/api/auth/me", {
-                    signal: controller.signal,
-                })
-
-                if (controller.signal.aborted) return
-
-                if (response.ok) {
-                    const currentUser: CurrentUser = await response.json()
-
-                    if (controller.signal.aborted) return
-
-                    setUser(currentUser)
-                    setAuthStatus("signedIn")
-                } else if (response.status === 401) {
-                    setUser(null)
-                    setAuthStatus("guest")
-                } else {
-                    setUser(null)
-                    setAuthStatus("error")
-                }
-            } catch {
-                if (!controller.signal.aborted) {
-                    setUser(null)
-                    setAuthStatus("error")
-                }
-            }
-        }
-
-        void checkSession()
-        return () => controller.abort()
-    }, [])
-
-    async function logout() {
-        if (loggingOut) return
-
-        setLoggingOut(true)
-        setLogoutError("")
-
-        try {
-            const response = await fetch("/api/auth/logout", { method: "POST" })
-
-            if (!response.ok) {
-                setLogoutError("Не вдалося вийти. Спробуй ще раз.")
-                return
-            }
-
-            setUser(null)
-            setAuthStatus("guest")
-
-            setAuthStatus("guest")
-        } catch {
-            setLogoutError("Не вдалося з’єднатися із сервером.")
-        } finally {
-            setLoggingOut(false)
-        }
-    }
+    const { user, authStatus, logout, loggingOut, logoutError } = useAuth()
 
     return (
         <>

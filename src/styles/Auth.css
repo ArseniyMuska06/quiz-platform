@@ -42,7 +42,6 @@
 }
 
 .auth-field input {
-    width: 100%;
     background-color: white;
     border: 1px solid #dcd6e7;
     border-radius: 10px;

@@ -1,5 +1,6 @@
-import { Link, useNavigate } from "react-router"
-import { useEffect, useState, type FormEvent } from "react"
+import { Link, Navigate, useNavigate } from "react-router"
+import { useState, type FormEvent } from "react"
+import { useAuth } from "../../hooks/useAuth"
 import './CreateTestPage.css'
 
 type QuestionType = "text" | "single" | "multiple"
@@ -33,7 +34,7 @@ function createEmptyQuestion(): QuestionDraft {
 
 function CreateTestPage() {
     const navigate = useNavigate()
-    const [status, setStatus] = useState<"loading" | "ready" | "error">("loading")
+    const { user, authStatus, logout, loggingOut } = useAuth()
 
     const [saving, setSaving] = useState(false)
     const [saveError, setSaveError] = useState("")
@@ -142,35 +143,6 @@ function CreateTestPage() {
         }))
     }
 
-    useEffect(() => {
-        const controller = new AbortController()
-
-        async function checkSession() {
-            try {
-                const response = await fetch("/api/auth/me", {
-                    signal: controller.signal,
-                })
-
-                if (controller.signal.aborted) return
-
-                if (response.status === 401) {
-                    navigate("/login", {
-                        replace: true,
-                        state: { from: "/create" },
-                    })
-                    return
-                }
-
-                setStatus(response.ok ? "ready" : "error")
-            } catch {
-                if (!controller.signal.aborted) setStatus("error")
-            }
-        }
-
-        void checkSession()
-        return () => controller.abort()
-    }, [navigate])
-
     async function createTest(event: FormEvent<HTMLFormElement>) {
         event.preventDefault()
         if (saving) return
@@ -247,166 +219,203 @@ function CreateTestPage() {
         }
     }
 
-    if (status === "loading") return <p>Перевірка входу…</p>
-    if (status === "error") return <p role="alert">Не вдалося перевірити вхід. Онови сторінку.</p>
+    if (authStatus === "loading") return <p>Перевіряємо вхід…</p>
+    if (authStatus === "error") return <p role="alert">Не вдалося перевірити вхід.</p>
+    if (!user) return <Navigate to="/login" replace />
 
     return (
-        <main className="main">
-            <div className="content">
-                <Link to="/my-tests">Мої тести</Link>
-                <h1>Створити тест</h1>
+        <>
+            <header className="header">
+                <div className="content">
+                    <p className="quizora-logo">Quizora</p>
+                    <div className="header-buttons">
+                        <p className="header-user-name">{user.name}</p>
 
-                <form onSubmit={createTest}>
-                <fieldset disabled={saving}>
-                    <legend>Інформація про тест</legend>
-
-                    <p>
-                        <label>
-                            Назва тесту<br />
-                            <input name="name" required />
-                        </label>
-                    </p>
-
-                    <p>
-                        <label>
-                            Опис<br />
-                            <textarea name="description" required />
-                        </label>
-                    </p>
-
-                    <p>
-                        <label>
-                            Видимість<br />
-                            <select name="visibility" defaultValue="private">
-                                <option value="private">Особистий</option>
-                                <option value="public">Публічний</option>
-                            </select>
-                        </label>
-                    </p>
-                </fieldset>
-
-                <p>Кількість запитань: {questions.length}</p>
-
-                {questions.map((question, index) => (
-                    <fieldset key={question.key} disabled={saving}>
-                        <legend>Запитання {index + 1}</legend>
-
-                        <p>
-                            <label>
-                                Тип запитання<br />
-                                <select
-                                    value={question.type}
-                                    onChange={event => changeQuestionType(
-                                        question.key,
-                                        event.target.value as QuestionType
-                                    )}
-                                >
-                                    <option value="text">Текстова відповідь</option>
-                                    <option value="single">Одна правильна відповідь</option>
-                                    <option value="multiple">Декілька правильних відповідей</option>
-                                </select>
-                            </label>
-                        </p>
-
-                        <p>
-                            <label>
-                                Текст запитання<br />
-                                <textarea
-                                    value={question.question}
-                                    onChange={event => updateQuestion(
-                                        question.key,
-                                        "question",
-                                        event.target.value
-                                    )}
-                                    required
-                                />
-                            </label>
-                        </p>
-
-                        {question.type === "text" ? (
-                            <p>
-                                <label>
-                                    Правильна відповідь<br />
-                                    <input
-                                        value={question.rightAnswer}
-                                        onChange={event => updateQuestion(
-                                            question.key,
-                                            "rightAnswer",
-                                            event.target.value
-                                        )}
-                                        required
-                                    />
-                                </label>
-                            </p>
-                        ) : (
-                            <div>
-                                <p>Познач правильні варіанти відповідей.</p>
-
-                                {question.variants.map((variant, variantIndex) => (
-                                    <div key={variant.key}>
-                                        <label>
-                                            <input
-                                                type={question.type === "single" ? "radio" : "checkbox"}
-                                                name={`correct-${question.key}`}
-                                                checked={variant.correct}
-                                                onChange={event => selectVariant(
-                                                    question.key,
-                                                    variant.key,
-                                                    event.target.checked
-                                                )}
-                                            />
-                                            Правильний варіант {variantIndex + 1}
-                                        </label>
-
-                                        <input
-                                            aria-label={`Текст варіанта ${variantIndex + 1}`}
-                                            value={variant.text}
-                                            onChange={event => updateVariant(
-                                                question.key,
-                                                variant.key,
-                                                event.target.value
-                                            )}
-                                            required
-                                        />
-
-                                        <button
-                                            type="button"
-                                            onClick={() => removeVariant(question.key, variant.key)}
-                                            disabled={question.variants.length <= 2}
-                                        >
-                                            Видалити варіант
-                                        </button>
-                                    </div>
-                                ))}
-
-                                <button type="button" onClick={() => addVariant(question.key)}>
-                                    Додати варіант
-                                </button>
-                            </div>
-                        )}
+                        <button type="button" className="text-button" onClick={() => navigate('/my-tests')}>
+                            Мої тести
+                        </button>
 
                         <button
                             type="button"
-                            onClick={() => removeQuestion(question.key)}
-                            disabled={questions.length === 1}
+                            className="text-button"
+                            onClick={logout}
+                            disabled={loggingOut}
                         >
-                            Видалити запитання
+                            {loggingOut ? "Виходимо…" : "Вихід"}
                         </button>
-                    </fieldset>
-                ))}
+                    </div>
+                </div>
+            </header>
+        
+            <main className="main">
+                <div className="content">
+                    <div className="create-test-header">
+                        <Link className="purple-link" to="/my-tests">←До моїх тестів</Link>
+                        <h1>Створити тест</h1>
+                        <p>Додайте основну інформацію та запитання з правильними відповідями</p>
+                    </div>
 
-                <button type="button" onClick={addQuestion} disabled={saving}>
-                    Додати запитання
-                </button>
+                    <form className="create-test-form" onSubmit={createTest}>
+                        <fieldset className="test-editor-fieldset" disabled={saving}>
+                            <p className="label">Основна інформація</p>
 
-                {saveError && <p role="alert">{saveError}</p>}
+                            <div className="form-field">
+                                <p>Назва тесту</p>
+                                <input name="name" placeholder="Наприклад, Основи веброзробки" required />
+                            </div>
 
-                <button type="submit" disabled={saving}>
-                    {saving ? "Збереження…" : "Створити тест"}
-                </button>
-            </form>
-            </div>
-        </main>
+                            <div className="form-field">
+                                <p>Опис</p>
+                                <textarea name="description" placeholder="Коротко опишіть, які знання перевіряє тест" required />
+                            </div>
+
+                            <div className="form-field">
+                                <p>Видимість</p>
+                                <select name="visibility" defaultValue="private">
+                                    <option value="private">Особистий</option>
+                                    <option value="public">Публічний</option>
+                                </select>
+                            </div>
+                        </fieldset>
+
+                        {questions.map((question, index) => (
+                            <fieldset className="test-editor-fieldset" key={question.key} disabled={saving}>
+                                <div className="test-editor-header">
+                                    <p className="label">Запитання {index + 1}</p>
+                                    {questions.length > 1 && 
+                                    <button
+                                        type="button"
+                                        onClick={() => removeQuestion(question.key)}
+                                        disabled={questions.length === 1}
+                                    >
+                                        Видалити запитання
+                                    </button>}
+                                </div>
+
+                                <div className="form-field">
+                                    <p>Текст запитання</p>
+                                    <input
+                                        value={question.question}
+                                        onChange={event => updateQuestion(
+                                            question.key,
+                                            "question",
+                                            event.target.value
+                                        )}
+                                        placeholder="Введіть запитання"
+                                        required
+                                    />
+                                </div>
+
+                                <div className="form-field">
+                                    <p>Тип відповіді</p>
+                                    <select
+                                        value={question.type}
+                                        onChange={event => changeQuestionType(
+                                            question.key,
+                                            event.target.value as QuestionType
+                                        )}
+                                    >
+                                        <option value="text">Текстова відповідь</option>
+                                        <option value="single">Одна правильна відповідь</option>
+                                        <option value="multiple">Декілька правильних відповідей</option>
+                                    </select>
+                                </div>
+
+                                {question.type === "text" ? (
+                                    <div className="form-field">
+                                        <p>Правильна відповідь</p>
+                                        <input
+                                            value={question.rightAnswer}
+                                            onChange={event => updateQuestion(
+                                                question.key,
+                                                "rightAnswer",
+                                                event.target.value
+                                            )}
+                                            placeholder="Введіть правильну відповідь"
+                                            required
+                                        />
+                                    </div>
+                                ) : (
+                                    <div className="form-field">
+                                        <div className="answer-options-header">
+                                            <p>Варіанти відповіді</p>
+                                            <p className="field-hint">Позначте правильні</p>
+                                        </div>
+
+                                        {question.variants.map((variant, variantIndex) => (
+                                            <div className="answer-option-row" key={variant.key}>
+                                                <input
+                                                    type={question.type === "single" ? "radio" : "checkbox"}
+                                                    name={`correct-${question.key}`}
+                                                    checked={variant.correct}
+                                                    onChange={event => selectVariant(
+                                                        question.key,
+                                                        variant.key,
+                                                        event.target.checked
+                                                    )}
+                                                />
+
+                                                <input
+                                                    aria-label={`Текст варіанта ${variantIndex + 1}`}
+                                                    type="text"
+                                                    value={variant.text}
+                                                    onChange={event => updateVariant(
+                                                        question.key,
+                                                        variant.key,
+                                                        event.target.value
+                                                    )}
+                                                    placeholder={`Варіант ${variantIndex + 1}`}
+                                                    required
+                                                />
+
+                                                {question.variants.length > 2 && 
+                                                <button
+                                                    type="button"
+                                                    className="remove-variant-button"
+                                                    onClick={() => removeVariant(question.key, variant.key)}
+                                                >
+                                                    <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true">
+                                                        <path
+                                                            d="M6 6L18 18M18 6L6 18"
+                                                            stroke="currentColor"
+                                                            strokeWidth="2"
+                                                            strokeLinecap="round"
+                                                        />
+                                                    </svg>
+                                                </button>}
+                                            </div>
+                                        ))}
+
+                                        <button className="text-button purple" type="button" onClick={() => addVariant(question.key)}>
+                                            + Додати варіант
+                                        </button>
+                                    </div>
+                                )}
+                            </fieldset>
+                        ))}
+
+                    <button className="add-question-button" type="button" onClick={addQuestion} disabled={saving}>
+                        + Додати запитання
+                    </button>
+
+                    {saveError && <p role="alert">{saveError}</p>}
+
+                    <div className="form-actions">
+                        <button className="create-test-button" type="submit" disabled={saving}>
+                            {saving ? "Збереження…" : "Створити тест"}
+                        </button>
+                    </div>
+                </form>
+                </div>
+            </main>
+
+            <footer className="footer">
+                <div className="content">
+                    <p>Quizora — створюй тести та перевіряй знання</p>
+                    <p>© 2026 Quizora</p>
+                </div>
+            </footer>
+        </>
     )
 }
 

@@ -93,7 +93,7 @@ function LoginPage() {
                                 />
                             </div>
 
-                            {error && <p role="alert">{error}</p>}
+                            {error && <p className="error-message" role="alert">{error}</p>}
 
                             <button className="auth-submit-button" type="submit" disabled={loading}>
                                 {loading ? "Входимо…" : "Увійти"}
